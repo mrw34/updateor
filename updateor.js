@@ -41,22 +41,21 @@ if (Meteor.isServer) {
       }
     }, {});
     _.each(repos, (repo, name) => {
-      const versions = repo.versions.split('\n').reduce((memo, line) => _.extend(_.object([line.split('@')]), memo), {});
-      const packages = repo.packages.split('\n').filter(line => line && line.indexOf('#') !== 0 && line.indexOf(':') !== -1);
-      const packageVersions = packages.reduce((memo, name) => {
-        if (versions[name] !== latestVersions[name]) {
-          const notification = {
-            username: github.username,
-            package: name,
-            version: latestVersions[name]
+      const versions = repo.versions.trim().split('\n').reduce((memo, line) => _.extend(_.object([line.split('@')]), memo), {});
+      const packages = repo.packages.trim().split('\n').filter(line => line && line.indexOf('#') !== 0 && line.indexOf(':') !== -1);
+      const packageVersions = packages.filter(pkg => versions[pkg] !== latestVersions[pkg]).reduce((memo, pkg) => {
+        const notification = {
+          username: github.username,
+          repo: name,
+          package: pkg,
+          version: latestVersions[pkg]
+        };
+        if (!Notifications.findOne(notification)) {
+          memo[pkg] = {
+            current: versions[pkg],
+            available: latestVersions[pkg]
           };
-          if (!Notifications.findOne(notification)) {
-            memo[name] = {
-              current: versions[name],
-              available: latestVersions[name]
-            };
-            Notifications.insert(notification);
-          }
+          Notifications.insert(notification);
         }
         return memo;
       }, {});
