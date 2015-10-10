@@ -1,5 +1,5 @@
 if (Meteor.isServer) {
-  var Notifications = new Mongo.Collection('notifications');
+  const Notifications = new Mongo.Collection('notifications');
   var latestVersions;
   Meteor.users.allow({
     remove: (userId, doc) => doc._id === userId
@@ -30,7 +30,7 @@ if (Meteor.isServer) {
       Authorization: `token ${github.accessToken}`,
       'User-Agent': 'mrw34/updateor'
     };
-    var repos = HTTP.get(`https://api.github.com/users/${github.username}/repos`, {headers: headers}).data.reduce((memo, repo) => {
+    const repos = HTTP.get(`https://api.github.com/users/${github.username}/repos`, {headers: headers}).data.reduce((memo, repo) => {
       try {
         memo[repo.name] = {
           packages: HTTP.get(repo.contents_url.replace('{+path}', '.meteor/packages'), {headers: _.extend({Accept: 'application/vnd.github.v3.raw'}, headers)}).content,
@@ -41,9 +41,9 @@ if (Meteor.isServer) {
       }
     }, {});
     _.each(repos, (repo, name) => {
-      var versions = repo.versions.split('\n').reduce((memo, line) => _.extend(_.object([line.split('@')]), memo), {});
-      var packages = repo.packages.split('\n').filter(line => line && line.indexOf('#') !== 0 && line.indexOf(':') !== -1);
-      var packageVersions = packages.reduce((memo, name) => {
+      const versions = repo.versions.split('\n').reduce((memo, line) => _.extend(_.object([line.split('@')]), memo), {});
+      const packages = repo.packages.split('\n').filter(line => line && line.indexOf('#') !== 0 && line.indexOf(':') !== -1);
+      const packageVersions = packages.reduce((memo, name) => {
         if (versions[name] !== latestVersions[name]) {
           const notification = {
             username: github.username,
