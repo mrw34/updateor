@@ -3,7 +3,11 @@
   "ecmaFeatures": {
     "arrowFunctions": true,
     "blockBindings": true,
-    "templateStrings": true
+    "templateStrings": true,
+    "noInnerDeclarations": false
+  },
+  "rules": {
+    "no-inner-declarations": 0
   },
   "env": {
     "meteor": true

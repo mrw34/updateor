@@ -2,7 +2,7 @@ if (Meteor.isServer) {
   var Notifications = new Mongo.Collection('notifications');
   var latestVersions;
   Meteor.users.allow({
-    remove: () => true
+    remove: (userId, doc) => doc._id === userId
   });
   Meteor.startup(() => {
     updateLatestVersions();
@@ -12,9 +12,11 @@ if (Meteor.isServer) {
       }
     });
     Meteor.setInterval(() => {
-      updateLatestVersions();
-      Meteor.users.find().forEach(checkUser);
-    }, 24 * 60 * 60 * 1000);
+      if (new Date().toISOString().indexOf('T02:00') !== -1) {
+        updateLatestVersions();
+        Meteor.users.find().forEach(checkUser);
+      }
+    }, 60 * 1000);
   });
   function updateLatestVersions() {
     latestVersions = HTTP.get('https://atmospherejs.com/a/packages', {headers: {Accept: 'application/json'}}).data.filter(pkg => pkg.latestVersion).reduce((memo, pkg) => {
@@ -30,15 +32,13 @@ if (Meteor.isServer) {
     };
     var repos = HTTP.get(`https://api.github.com/users/${github.username}/repos`, {headers: headers}).data.reduce((memo, repo) => {
       try {
-        const getOptions = {headers: _.extend({Accept: 'application/vnd.github.v3.raw'}, headers)};
         memo[repo.name] = {
-          packages: HTTP.get(repo.contents_url.replace('{+path}', '.meteor/packages'), getOptions).content,
-          versions: HTTP.get(repo.contents_url.replace('{+path}', '.meteor/versions'), getOptions).content
+          packages: HTTP.get(repo.contents_url.replace('{+path}', '.meteor/packages'), {headers: _.extend({Accept: 'application/vnd.github.v3.raw'}, headers)}).content,
+          versions: HTTP.get(repo.contents_url.replace('{+path}', '.meteor/versions'), {headers: _.extend({Accept: 'application/vnd.github.v3.raw'}, headers)}).content
         }
-      } catch (e) {
-        // Do nothing
+      } finally {
+        return memo;
       }
-      return memo;
     }, {});
     _.each(repos, (repo, name) => {
       var versions = repo.versions.split('\n').reduce((memo, line) => _.extend(_.object([line.split('@')]), memo), {});
@@ -65,7 +65,7 @@ if (Meteor.isServer) {
           from: 'Updateor <mark.woodbridge+updateor@gmail.com>',
           to: github.email,
           subject: `Package updates for ${name}`,
-          text: ['The following updates are available:', ''].concat(_.map(packageVersions, (pkg, name) => `${name} ${pkg.available} (previously ${pkg.current})`)).concat(['', 'Run the following to install them:', '', `meteor update ${Object.keys(packageVersions).join(' ')}`]).join('\n')
+          text: ['The following updates are available:', ''].concat(_.map(packageVersions, (pkg, name) => `${name} ${pkg.available} (previously ${pkg.current})`)).concat(['', 'Run the following to install them:', '', `meteor update ${Object.keys(packageVersions).join(' ')}`, '', 'Visit the site to unsubscribe:', '', 'http://updateor.meteor.com']).join('\n')
         });
       }
     });

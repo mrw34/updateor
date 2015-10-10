@@ -1,7 +1,10 @@
 <body>
-  {{> loginButtons}}
+  <h1>Updateor</h1>
   {{#if currentUser}}
-  <p>Thanks! You'll be emailed when your Meteor projects' dependencies are outdated.</p>
-  <button>I've changed my mind. Don't notify me any more!</button>
+  <p>You'll be emailed your Meteor projects' dependencies need updating</p>
+  <button>Don't notify me any more!</button>
+  {{else}}
+  <p>Sign in to be emailed when your Meteor projects' dependencies need updating</p>
+  {{> loginButtons}}
   {{/if}}
 </body>
