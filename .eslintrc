@@ -1,0 +1,11 @@
+{
+  "extends": "eslint:recommended",
+  "ecmaFeatures": {
+    "arrowFunctions": true,
+    "blockBindings": true,
+    "templateStrings": true
+  },
+  "env": {
+    "meteor": true
+  }
+}
