@@ -29,7 +29,7 @@ if (Meteor.isServer) {
     const github = user.services.github;
     const headers = {
       Authorization: `token ${github.accessToken}`,
-      'User-Agent': 'mrw34/updateor'
+      'User-Agent': Meteor.settings.user_agent
     };
     const url = `https://api.github.com/users/${github.username}/repos`;
     const repos = HTTP.get(url, { headers: headers })
@@ -77,7 +77,7 @@ if (Meteor.isServer) {
       }, {});
       if (_.isEmpty(packageVersions)) return;
       Email.send({
-        from: 'Updateor <mark.woodbridge+updateor@gmail.com>',
+        from: Meteor.settings.email_from,
         to: github.email,
         subject: `Package updates for ${name}`,
         text: ['The following updates are available:', '']
