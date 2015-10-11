@@ -1,10 +1,16 @@
-<body>
+<head>
+  <title>Updateor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+</head>
+
+<body class="container" style="margin-top: 6rem; text-align: center;" class="Aligner">
   <h1>Updateor</h1>
   {{#if currentUser}}
-  <p>You'll be automatically notified by email when your Meteor projects' dependencies need updating</p>
-  <button>Don't notify me any more!</button>
+  <p>You're signed up to be automatically notified when your Meteor projects' dependencies need updating.</p>
+  <button class="button-primary">Don't notify me any more!</button>
   {{else}}
-  <p>Sign in to be automatically notified by email when your Meteor projects' dependencies need updating</p>
+  <p>Sign in to be automatically notified when your Meteor projects' dependencies need updating</p>
   {{> loginButtons}}
   {{/if}}
+  <p style="margin-top: 6rem"><small>A <a href="http://meteor-2015.devpost.com/">Meteor Global Hackathon</a> project by <a href="https://twitter.com/mrw34">@mrw34</a> | <a href="https://github.com/mrw34/updateor">View on GitHub</a></small></p>
 </body>
