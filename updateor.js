@@ -6,7 +6,7 @@ if (Meteor.isServer) {
   });
   Meteor.startup(() => {
     updateLatestVersions();
-    Meteor.users.find().observeChanges({
+    Meteor.users.find({createdAt: {$gt: new Date()}}).observeChanges({
       added: (id, user) => {
         checkUser(user);
       }
