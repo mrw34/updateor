@@ -3,8 +3,7 @@
   "ecmaFeatures": {
     "arrowFunctions": true,
     "blockBindings": true,
-    "templateStrings": true,
-    "noInnerDeclarations": false
+    "templateStrings": true
   },
   "rules": {
     "no-inner-declarations": 0
